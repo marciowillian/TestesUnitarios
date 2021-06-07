@@ -29,19 +29,20 @@ public class CalculoValorLocacaoTest {
 	public List<Filme> filmes;
 	
 	@Parameter(value=1)
-	public Double valorLocacao;
+	public Double valorLocacao = 0.0;
 	
 	@Before
 	public void setUp() {
 		service = new LocacaoService();
+		
 	}
 	
-	private static Filme filme1 = new Filme("Filme 1", 2, 4.0);
-	private static Filme filme2 = new Filme("Filme 2", 2, 4.0);
-	private static Filme filme3 = new Filme("Filme 3", 2, 4.0);
-	private static Filme filme4 = new Filme("Filme 4", 2, 4.0);
-	private static Filme filme5 = new Filme("Filme 5", 2, 4.0);
-	private static Filme filme6 = new Filme("Filme 6", 2, 4.0);
+	private static Filme filme1 = new Filme("Filme 1", 1, 4.0);
+	private static Filme filme2 = new Filme("Filme 2", 1, 4.0);
+	private static Filme filme3 = new Filme("Filme 3", 1, 4.0);
+	private static Filme filme4 = new Filme("Filme 4", 1, 4.0);
+	private static Filme filme5 = new Filme("Filme 5", 1, 4.0);
+	private static Filme filme6 = new Filme("Filme 6", 1, 4.0);
 	
 	@Parameters(name="Teste {index} = {0} - {1}")
 	public static Collection<Object[]> getParametros(){
