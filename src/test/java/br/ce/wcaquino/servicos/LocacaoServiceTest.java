@@ -1,12 +1,13 @@
 package br.ce.wcaquino.servicos;
 
+import static br.ce.wcaquino.matchers.MatchersProprios.caiEm;
+import static br.ce.wcaquino.matchers.MatchersProprios.caiEmUmaSegunda;
 import static br.ce.wcaquino.utils.DataUtils.isMesmaData;
 import static br.ce.wcaquino.utils.DataUtils.obterDataComDiferencaDias;
 import static junit.framework.Assert.fail;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeFalse;
 import static org.junit.Assume.assumeTrue;
 
@@ -64,6 +65,8 @@ public class LocacaoServiceTest {
 		// verificacao
 		error.checkThat(locacao.getValor(), is(equalTo(14.25)));
 		error.checkThat(isMesmaData(locacao.getDataLocacao(), new Date()), is(true));
+//		error.checkThat(locacao.getDataLocacao(), ehHoje());
+
 		error.checkThat(isMesmaData(locacao.getDataRetorno(), obterDataComDiferencaDias(1)), is(true));
 	}
 
@@ -117,6 +120,21 @@ public class LocacaoServiceTest {
 
 		// acao
 		service.alugarFilme(usuario, null);
+	}
+	
+	@Test
+	public void deveDevolverFilmeNaSegundaAoLocarNoSabado() throws LocacaoException, FilmeSemEstoqueException {
+		assumeTrue(DataUtils.verificarDiaSemana(new Date(), Calendar.SATURDAY));
+		
+		//cenario
+		usuario = new Usuario("Usuario 1");
+		List<Filme> filmes = Arrays.asList(new Filme("Filme 1", 1, 4.0));
+		
+		//acao
+		Locacao locacao = service.alugarFilme(usuario, filmes);
+		
+		//verificacao
+		assertThat(locacao.getDataRetorno(), caiEmUmaSegunda());
 	}
 	
 }
