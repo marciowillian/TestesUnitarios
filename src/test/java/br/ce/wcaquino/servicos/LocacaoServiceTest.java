@@ -68,7 +68,7 @@ public class LocacaoServiceTest {
 	}
 
 	/*
-	 * Forma Elegante de tratamento de exceção
+	 * Forma Elegante de tratamento de exceï¿½ï¿½o
 	 */
 	@Test(expected = FilmeSemEstoqueException.class)
 	public void deveTestarLocacaoDeFilmeSemEstoque() throws Exception {
@@ -119,89 +119,4 @@ public class LocacaoServiceTest {
 		service.alugarFilme(usuario, null);
 	}
 	
-	@Test
-	public void deveTestarAplicacaoDe25PctDeDescontoNoTerceiroFilme() throws LocacaoException, FilmeSemEstoqueException {
-		//cenario
-		usuario = new Usuario("Usuario 1");
-		List<Filme> filmes = Arrays.asList(
-				new Filme("Filme 1", 1, 4.0),
-				new Filme("Filme 2", 1, 4.0),
-				new Filme("Filme 3", 1, 4.0));
-		
-		//acao
-		Locacao locacao = service.alugarFilme(usuario, filmes);
-		
-		//verificacao
-		assertThat(11.0, is(locacao.getValor()));
-	}
-	
-	@Test
-	public void deveTestarAplicacaoDe50PctDeDescontoNoQuartoFilme() throws LocacaoException, FilmeSemEstoqueException {
-		//cenario
-		usuario = new Usuario("Usuario 1");
-		List<Filme> filmes = Arrays.asList(
-				new Filme("Filme 1", 1, 4.0),
-				new Filme("Filme 2", 1, 4.0),
-				new Filme("Filme 3", 1, 4.0),
-				new Filme("Filme 4", 1, 4.0));
-		
-		//acao
-		Locacao locacao = service.alugarFilme(usuario, filmes);
-		
-		//verificacao
-		assertThat(13.0, is(locacao.getValor()));
-	}
-	
-	@Test
-	public void deveTestarAplicacaoDe75PctDeDescontoNoQuintoFilme() throws LocacaoException, FilmeSemEstoqueException {
-		//cenario
-		usuario = new Usuario("Usuario 1");
-		List<Filme> filmes = Arrays.asList(
-				new Filme("Filme 1", 1, 4.0),
-				new Filme("Filme 2", 1, 4.0),
-				new Filme("Filme 3", 1, 4.0),
-				new Filme("Filme 4", 1, 4.0),
-				new Filme("Filme 5", 1, 4.0));
-		
-		//acao
-		Locacao locacao = service.alugarFilme(usuario, filmes);
-		
-		//verificacao
-		assertThat(14.0, is(locacao.getValor()));
-	}
-	
-	@Test
-	public void deveTestarAplicacaoDe100PctDeDescontoNoSextoFilme() throws LocacaoException, FilmeSemEstoqueException {
-		//cenario
-		usuario = new Usuario("Usuario 1");
-		List<Filme> filmes = Arrays.asList(
-				new Filme("Filme 1", 1, 4.0),
-				new Filme("Filme 2", 1, 4.0),
-				new Filme("Filme 3", 1, 4.0),
-				new Filme("Filme 4", 1, 4.0),
-				new Filme("Filme 5", 1, 4.0),
-				new Filme("Filme 6", 1, 4.0));
-		
-		//acao
-		Locacao locacao = service.alugarFilme(usuario, filmes);
-		
-		//verificacao
-		assertThat(14.0, is(locacao.getValor()));
-	}
-	
-	@Test
-	public void deveDevolverFilmeNaSegundaAoLocarNoSabado() throws LocacaoException, FilmeSemEstoqueException {
-		assumeTrue(DataUtils.verificarDiaSemana(new Date(), Calendar.SUNDAY));
-		
-		//cenario
-		usuario = new Usuario("Usuario 1");
-		List<Filme> filmes = Arrays.asList(new Filme("Filme 1", 1, 4.0));
-		
-		//acao
-		Locacao locacao = service.alugarFilme(usuario, filmes);
-		
-		//verificacao
-		boolean ehSegunda = DataUtils.verificarDiaSemana(locacao.getDataRetorno(), Calendar.MONDAY);
-		assertTrue(ehSegunda);
-	}
 }

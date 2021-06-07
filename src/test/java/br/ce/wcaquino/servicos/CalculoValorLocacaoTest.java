@@ -31,6 +31,9 @@ public class CalculoValorLocacaoTest {
 	@Parameter(value=1)
 	public Double valorLocacao = 0.0;
 	
+	@Parameter(value=2)
+	public String cenario;
+	
 	@Before
 	public void setUp() {
 		service = new LocacaoService();
@@ -43,14 +46,17 @@ public class CalculoValorLocacaoTest {
 	private static Filme filme4 = new Filme("Filme 4", 1, 4.0);
 	private static Filme filme5 = new Filme("Filme 5", 1, 4.0);
 	private static Filme filme6 = new Filme("Filme 6", 1, 4.0);
+	private static Filme filme7 = new Filme("Filme 7", 1, 4.0);
 	
-	@Parameters(name="Teste {index} = {0} - {1}")
+	@Parameters(name="{2}")
 	public static Collection<Object[]> getParametros(){
 		return Arrays.asList(new Object [][] {
-			{Arrays.asList(filme1, filme2, filme3), 11.0},
-			{Arrays.asList(filme1, filme2, filme3, filme4), 13.0},
-			{Arrays.asList(filme1, filme2, filme3, filme4, filme5), 14.0},
-			{Arrays.asList(filme1, filme2, filme3, filme4, filme5, filme6), 14.0}
+			{Arrays.asList(filme1, filme2), 8.0, "1º e 2º filme nao tem desconto"},
+			{Arrays.asList(filme1, filme2, filme3), 11.0, "25% de desconto"},
+			{Arrays.asList(filme1, filme2, filme3, filme4), 13.0, "50% de desconto"},
+			{Arrays.asList(filme1, filme2, filme3, filme4, filme5), 14.0, "75% de desconto"},
+			{Arrays.asList(filme1, filme2, filme3, filme4, filme5, filme6), 14.0, "100% de desconto"},
+			{Arrays.asList(filme1, filme2, filme3, filme4, filme5, filme6, filme7), 18.0, "o 7º filme nao possui desconto"}
 		});
 	}
 	
