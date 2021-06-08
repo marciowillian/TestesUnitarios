@@ -12,11 +12,11 @@ public class MatchersProprios {
 		return new DiaSemanaMatcher(Calendar.MONDAY);
 	}
 	
-//	public static DiaSemanaMatcher ehHoje() {
-//		return new DiaSemanaMatcher();
-//	}
+	public static DataRetornoMatcher ehHoje() {
+		return ehHojeComDiferencaDias(0);
+	}
 	
-	public static DiaSemanaMatcher ehHojeComDiferencaDias(Integer diaSemana) {
-		return new DiaSemanaMatcher(diaSemana);
+	public static DataRetornoMatcher ehHojeComDiferencaDias(Integer diaSemana) {
+		return new DataRetornoMatcher(diaSemana);
 	}
 }
