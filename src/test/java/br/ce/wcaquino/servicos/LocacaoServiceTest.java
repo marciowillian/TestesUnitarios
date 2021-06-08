@@ -1,5 +1,7 @@
 package br.ce.wcaquino.servicos;
 
+import static br.ce.wcaquino.builders.FilmeBuilder.umFilme;
+import static br.ce.wcaquino.builders.UsuarioBuilder.umUsuario;
 import static br.ce.wcaquino.matchers.MatchersProprios.caiEmUmaSegunda;
 import static br.ce.wcaquino.matchers.MatchersProprios.ehHoje;
 import static br.ce.wcaquino.matchers.MatchersProprios.ehHojeComDiferencaDias;
@@ -50,19 +52,18 @@ public class LocacaoServiceTest {
 	@Test
 	public void deveTestarLocacaoComSucesso() throws Exception {
 		assumeFalse(DataUtils.verificarDiaSemana(new Date(), Calendar.SATURDAY));
-		
-		// cenario
-		usuario = new Usuario("Usuario 1");
 
-		filmes = Arrays.asList(new Filme("Filme 1", 2, 4.0), new Filme("Filme 2", 3, 5.0),
-				new Filme("Filme 3", 5, 7.0));
+		// cenario
+		usuario = umUsuario().agora();
+
+		filmes = Arrays.asList(umFilme().agora(), umFilme().agora(), umFilme().agora());
 
 		// acao
 		Locacao locacao;
 		locacao = service.alugarFilme(usuario, filmes);
 
 		// verificacao
-		error.checkThat(locacao.getValor(), is(equalTo(14.25)));
+		error.checkThat(locacao.getValor(), is(equalTo(11.0)));
 		error.checkThat(locacao.getDataLocacao(), ehHoje());
 		error.checkThat(locacao.getDataRetorno(), ehHojeComDiferencaDias(1));
 	}
@@ -73,14 +74,10 @@ public class LocacaoServiceTest {
 	@Test(expected = FilmeSemEstoqueException.class)
 	public void deveTestarLocacaoDeFilmeSemEstoque() throws Exception {
 		// cenario
-		usuario = new Usuario("Usuario 1");
+		usuario = umUsuario().agora();
 
-		Filme filme1 = new Filme("Filme 1", 0, 4.0);
-		Filme filme2 = new Filme("Filme 2", 0, 5.0);
-		Filme filme3 = new Filme("Filme 3", 0, 7.0);
-		filmes.add(filme1);
-		filmes.add(filme2);
-		filmes.add(filme3);
+		filmes = Arrays.asList(umFilme().semEstoque().agora(), umFilme().semEstoque().agora(),
+				umFilme().semEstoque().agora());
 
 		// acao
 		service.alugarFilme(usuario, filmes);
@@ -90,12 +87,9 @@ public class LocacaoServiceTest {
 	@Test
 	public void deveTestarLocacaoDeFilmeSemUsuario() throws FilmeSemEstoqueException {
 		// cenario
-		Filme filme1 = new Filme("Filme 1", 0, 4.0);
-		Filme filme2 = new Filme("Filme 2", 0, 5.0);
-		Filme filme3 = new Filme("Filme 3", 0, 7.0);
-		filmes.add(filme1);
-		filmes.add(filme2);
-		filmes.add(filme3);
+
+		filmes = Arrays.asList(umFilme().comValor(4d).agora(), umFilme().comValor(5d).agora(),
+				umFilme().comValor(7d).agora());
 
 		// acao
 		try {
@@ -110,7 +104,7 @@ public class LocacaoServiceTest {
 	@Test
 	public void deveTestarLocacaoDeFilmeSemFilme() throws LocacaoException, FilmeSemEstoqueException {
 		// cenario
-		usuario = new Usuario("Usuario 1");
+		usuario = umUsuario().agora();
 
 		exception.expect(LocacaoException.class);
 		exception.expectMessage("Lista de filmes vazia");
@@ -118,20 +112,20 @@ public class LocacaoServiceTest {
 		// acao
 		service.alugarFilme(usuario, null);
 	}
-	
+
 	@Test
 	public void deveDevolverFilmeNaSegundaAoLocarNoSabado() throws LocacaoException, FilmeSemEstoqueException {
 		assumeTrue(DataUtils.verificarDiaSemana(new Date(), Calendar.SATURDAY));
-		
-		//cenario
-		usuario = new Usuario("Usuario 1");
+
+		// cenario
+		usuario = umUsuario().agora();
 		List<Filme> filmes = Arrays.asList(new Filme("Filme 1", 1, 4.0));
-		
-		//acao
+
+		// acao
 		Locacao locacao = service.alugarFilme(usuario, filmes);
-		
-		//verificacao
+
+		// verificacao
 		assertThat(locacao.getDataRetorno(), caiEmUmaSegunda());
 	}
-	
+
 }
