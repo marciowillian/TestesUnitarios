@@ -14,7 +14,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
-import org.mockito.Mockito;
 
 import br.ce.wcaquino.builders.FilmeBuilder;
 import br.ce.wcaquino.dao.LocacaoDAO;
@@ -29,6 +28,7 @@ public class CalculoValorLocacaoTest {
 	
 	private LocacaoService service;
 	private LocacaoDAO dao;
+	private SPCService spc;
 	
 	@Parameter
 	public List<Filme> filmes;
@@ -43,7 +43,9 @@ public class CalculoValorLocacaoTest {
 	public void setUp() {
 		service = new LocacaoService();
 		dao = mock(LocacaoDAO.class);
+		spc = mock(SPCService.class);
 		service.setLocacaoDAO(dao);
+		service.setSPCService(spc);
 		
 	}
 	
