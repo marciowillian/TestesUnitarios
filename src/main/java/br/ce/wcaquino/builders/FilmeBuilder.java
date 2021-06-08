@@ -18,6 +18,15 @@ public class FilmeBuilder {
 		builder.filme.setNome("Filme 1");
 		return builder;
 	}
+	
+	public static FilmeBuilder umFilmeSemEstoque() {
+		FilmeBuilder builder = new FilmeBuilder();
+		builder.filme = new Filme();
+		builder.filme.setEstoque(0);
+		builder.filme.setPrecoLocacao(4.0);
+		builder.filme.setNome("Filme 1");
+		return builder;
+	}
 
 	public FilmeBuilder comValor(Double valor) {
 		filme.setPrecoLocacao(valor);

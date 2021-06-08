@@ -1,6 +1,7 @@
 package br.ce.wcaquino.servicos;
 
 import static br.ce.wcaquino.builders.FilmeBuilder.umFilme;
+import static br.ce.wcaquino.builders.FilmeBuilder.umFilmeSemEstoque;
 import static br.ce.wcaquino.builders.UsuarioBuilder.umUsuario;
 import static br.ce.wcaquino.matchers.MatchersProprios.caiEmUmaSegunda;
 import static br.ce.wcaquino.matchers.MatchersProprios.ehHoje;
@@ -24,6 +25,7 @@ import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
 
+import br.ce.wcaquino.builders.FilmeBuilder;
 import br.ce.wcaquino.entidades.Filme;
 import br.ce.wcaquino.entidades.Locacao;
 import br.ce.wcaquino.entidades.Usuario;
@@ -76,8 +78,7 @@ public class LocacaoServiceTest {
 		// cenario
 		usuario = umUsuario().agora();
 
-		filmes = Arrays.asList(umFilme().semEstoque().agora(), umFilme().semEstoque().agora(),
-				umFilme().semEstoque().agora());
+		filmes = Arrays.asList(umFilmeSemEstoque().agora(), umFilmeSemEstoque().agora(), umFilmeSemEstoque().agora());
 
 		// acao
 		service.alugarFilme(usuario, filmes);
