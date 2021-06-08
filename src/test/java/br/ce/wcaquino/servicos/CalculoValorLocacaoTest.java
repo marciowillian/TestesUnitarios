@@ -51,12 +51,12 @@ public class CalculoValorLocacaoTest {
 	@Parameters(name="{2}")
 	public static Collection<Object[]> getParametros(){
 		return Arrays.asList(new Object [][] {
-			{Arrays.asList(filme1, filme2), 8.0, "1º e 2º filme nao tem desconto"},
+			{Arrays.asList(filme1, filme2), 8.0, "filme 1 e 2 nao tem desconto"},
 			{Arrays.asList(filme1, filme2, filme3), 11.0, "25% de desconto"},
 			{Arrays.asList(filme1, filme2, filme3, filme4), 13.0, "50% de desconto"},
 			{Arrays.asList(filme1, filme2, filme3, filme4, filme5), 14.0, "75% de desconto"},
 			{Arrays.asList(filme1, filme2, filme3, filme4, filme5, filme6), 14.0, "100% de desconto"},
-			{Arrays.asList(filme1, filme2, filme3, filme4, filme5, filme6, filme7), 18.0, "o 7º filme nao possui desconto"}
+			{Arrays.asList(filme1, filme2, filme3, filme4, filme5, filme6, filme7), 18.0, "O filme 7 nao possui desconto"}
 		});
 	}
 	
