@@ -2,6 +2,7 @@ package br.ce.wcaquino.servicos;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -13,8 +14,10 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
+import org.mockito.Mockito;
 
 import br.ce.wcaquino.builders.FilmeBuilder;
+import br.ce.wcaquino.dao.LocacaoDAO;
 import br.ce.wcaquino.entidades.Filme;
 import br.ce.wcaquino.entidades.Locacao;
 import br.ce.wcaquino.entidades.Usuario;
@@ -25,6 +28,7 @@ import br.ce.wcaquino.exceptions.LocacaoException;
 public class CalculoValorLocacaoTest {
 	
 	private LocacaoService service;
+	private LocacaoDAO dao;
 	
 	@Parameter
 	public List<Filme> filmes;
@@ -38,6 +42,8 @@ public class CalculoValorLocacaoTest {
 	@Before
 	public void setUp() {
 		service = new LocacaoService();
+		dao = mock(LocacaoDAO.class);
+		service.setLocacaoDAO(dao);
 		
 	}
 	
