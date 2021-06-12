@@ -37,7 +37,7 @@ public class LocacaoService {
 		}
 		
 		if(spcService.isNegativado(usuario)) {
-			throw new LocacaoException("Usuario está negativado");
+			throw new LocacaoException("Usuario esta negativado");
 		}
 
 		Locacao locacao = new Locacao();

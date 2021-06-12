@@ -24,6 +24,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -146,36 +147,35 @@ public class LocacaoServiceTest {
 	}
 
 	@Test
-	public void deveTestarLocacaoComUsuarioNegativado() throws LocacaoException, FilmeSemEstoqueException {
+	public void deveTestarLocacaoComUsuarioNegativado() throws FilmeSemEstoqueException {
 		// cenario
 		usuario = umUsuario().agora();
 		List<Filme> filmes = Arrays.asList(umFilme().agora());
 
 		when(spc.isNegativado(usuario)).thenReturn(true);
 
-		exception.expect(LocacaoException.class);
-		exception.expectMessage("Usuario está negativado");
-
 		// acao
-		service.alugarFilme(usuario, filmes);
-
-		// verificacao
+		try {
+			service.alugarFilme(usuario, filmes);
+			// verificacao
+			fail();
+		} catch (LocacaoException e) {
+			Assert.assertThat(e.getMessage(), is("Usuario esta negativado"));
+		}
+		verify(spc).isNegativado(usuario);
 	}
 
 	@Test
 	public void deveEnviarEmailParaLocacoesAtrasadas() {
 		// cenario
 		Usuario usuario = UsuarioBuilder.umUsuario().agora();
-		List<Locacao> locacoes = Arrays.asList(
-				umaLocacao()
-					.comUsuario(usuario)
-					.comDataRetorno(obterDataComDiferencaDias(-2))
-					.agora());
+		List<Locacao> locacoes = Arrays
+				.asList(umaLocacao().comUsuario(usuario).comDataRetorno(obterDataComDiferencaDias(-2)).agora());
 		when(dao.obterLocacoesPendentes()).thenReturn(locacoes);
-		
+
 		// acao
 		service.notificarAtrasos();
-		
+
 		// verificacao
 		verify(email).notificarAtraso(usuario);
 	}
