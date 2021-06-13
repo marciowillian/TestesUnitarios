@@ -3,6 +3,7 @@ package br.ce.wcaquino.servicos;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.MockitoAnnotations.initMocks;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -14,6 +15,9 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import br.ce.wcaquino.builders.FilmeBuilder;
 import br.ce.wcaquino.dao.LocacaoDAO;
@@ -26,8 +30,11 @@ import br.ce.wcaquino.exceptions.LocacaoException;
 @RunWith(Parameterized.class)
 public class CalculoValorLocacaoTest {
 	
+	@InjectMocks
 	private LocacaoService service;
+	@Mock
 	private LocacaoDAO dao;
+	@Mock
 	private SPCService spc;
 	
 	@Parameter
@@ -41,12 +48,7 @@ public class CalculoValorLocacaoTest {
 	
 	@Before
 	public void setUp() {
-		service = new LocacaoService();
-		dao = mock(LocacaoDAO.class);
-		spc = mock(SPCService.class);
-		service.setLocacaoDAO(dao);
-		service.setSPCService(spc);
-		
+		initMocks(this);
 	}
 	
 	private static Filme filme1 = FilmeBuilder.umFilme().agora();

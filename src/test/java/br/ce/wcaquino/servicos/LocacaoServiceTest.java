@@ -7,18 +7,18 @@ import static br.ce.wcaquino.builders.UsuarioBuilder.umUsuario;
 import static br.ce.wcaquino.matchers.MatchersProprios.caiEmUmaSegunda;
 import static br.ce.wcaquino.matchers.MatchersProprios.ehHoje;
 import static br.ce.wcaquino.matchers.MatchersProprios.ehHojeComDiferencaDias;
-import static br.ce.wcaquino.utils.DataUtils.obterDataComDiferencaDias;
 import static junit.framework.Assert.fail;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assume.assumeFalse;
 import static org.junit.Assume.assumeTrue;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.initMocks;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -30,8 +30,10 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
-import br.ce.wcaquino.builders.UsuarioBuilder;
 import br.ce.wcaquino.dao.LocacaoDAO;
 import br.ce.wcaquino.entidades.Filme;
 import br.ce.wcaquino.entidades.Locacao;
@@ -42,11 +44,17 @@ import br.ce.wcaquino.utils.DataUtils;
 
 public class LocacaoServiceTest {
 
+	@InjectMocks
 	private LocacaoService service = new LocacaoService();
-	private Usuario usuario = new Usuario();
-	private List<Filme> filmes = new ArrayList<Filme>();
+
+	private Usuario usuario;
+	private List<Filme> filmes;
+
+	@Mock
 	private LocacaoDAO dao;
+	@Mock
 	private SPCService spc;
+	@Mock
 	private EmailService email;
 
 	@Rule
@@ -57,15 +65,7 @@ public class LocacaoServiceTest {
 
 	@Before
 	public void setUp() {
-		service = new LocacaoService();
-		dao = mock(LocacaoDAO.class);
-		spc = mock(SPCService.class);
-		email = mock(EmailService.class);
-		usuario = new Usuario("Usuario1");
-		service.setLocacaoDAO(dao);
-		service.setSPCService(spc);
-		service.setEmailService(email);
-
+		initMocks(this);
 	}
 
 	@Test
@@ -146,6 +146,7 @@ public class LocacaoServiceTest {
 		assertThat(locacao.getDataRetorno(), caiEmUmaSegunda());
 	}
 
+	@SuppressWarnings("deprecation")
 	@Test
 	public void deveTestarLocacaoComUsuarioNegativado() throws FilmeSemEstoqueException {
 		// cenario
@@ -168,9 +169,10 @@ public class LocacaoServiceTest {
 	@Test
 	public void deveEnviarEmailParaLocacoesAtrasadas() {
 		// cenario
-		Usuario usuario = UsuarioBuilder.umUsuario().agora();
-		List<Locacao> locacoes = Arrays
-				.asList(umaLocacao().comUsuario(usuario).comDataRetorno(obterDataComDiferencaDias(-2)).agora());
+		Usuario usuario = umUsuario().agora();
+		Usuario usuario2 = umUsuario().comNome("Usuario em dia").agora();
+		List<Locacao> locacoes = Arrays.asList(umaLocacao().atrasado().comUsuario(usuario).agora(),
+				umaLocacao().comUsuario(usuario2).agora());
 		when(dao.obterLocacoesPendentes()).thenReturn(locacoes);
 
 		// acao
@@ -178,6 +180,8 @@ public class LocacaoServiceTest {
 
 		// verificacao
 		verify(email).notificarAtraso(usuario);
+		verify(email, never()).notificarAtraso(usuario2);
+		verifyNoMoreInteractions(email);
 	}
 
 }

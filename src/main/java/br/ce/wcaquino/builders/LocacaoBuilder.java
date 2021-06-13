@@ -39,4 +39,10 @@ public class LocacaoBuilder {
 		return this;
 	}
 	
+	public LocacaoBuilder atrasado() {
+		locacao.setDataLocacao(DataUtils.obterDataComDiferencaDias(-4));
+		locacao.setDataRetorno(DataUtils.obterDataComDiferencaDias(-2));
+		return this;
+	}
+	
 }
