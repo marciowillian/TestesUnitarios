@@ -32,7 +32,6 @@ import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
 import br.ce.wcaquino.dao.LocacaoDAO;
 import br.ce.wcaquino.entidades.Filme;
@@ -148,7 +147,7 @@ public class LocacaoServiceTest {
 
 	@SuppressWarnings("deprecation")
 	@Test
-	public void deveTestarLocacaoComUsuarioNegativado() throws FilmeSemEstoqueException {
+	public void deveTestarLocacaoComUsuarioNegativado() throws Exception {
 		// cenario
 		usuario = umUsuario().agora();
 		List<Filme> filmes = Arrays.asList(umFilme().agora());
@@ -182,6 +181,23 @@ public class LocacaoServiceTest {
 		verify(email).notificarAtraso(usuario);
 		verify(email, never()).notificarAtraso(usuario2);
 		verifyNoMoreInteractions(email);
+	}
+	
+	@Test
+	public void deveTratarErroNoSPC() throws Exception {
+		//cenario
+		usuario = umUsuario().agora();
+		filmes = Arrays.asList(umFilme().agora());
+		
+		when(spc.isNegativado(usuario)).thenThrow(new Exception("Falha catastrofica"));
+		
+		//verificacao
+		exception.expect(LocacaoException.class);
+		exception.expectMessage("Problema com SPC, tente novamente");
+		
+		//acao
+		service.alugarFilme(usuario, filmes);
+		
 	}
 
 }
