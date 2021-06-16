@@ -43,12 +43,14 @@ public class Locacao {
 		this.valor = valor;
 	}
 
-	public List<Filme> getFilme() {
+	public List<Filme> getFilmes() {
 		return filmes;
 	}
 
 	public void setFilmes(List<Filme> filmes) {
 		this.filmes = filmes;
 	}
+
+	
 
 }
