@@ -30,9 +30,13 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import br.ce.wcaquino.dao.LocacaoDAO;
 import br.ce.wcaquino.entidades.Filme;
@@ -42,6 +46,8 @@ import br.ce.wcaquino.exceptions.FilmeSemEstoqueException;
 import br.ce.wcaquino.exceptions.LocacaoException;
 import br.ce.wcaquino.utils.DataUtils;
 
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(LocacaoService.class)
 public class LocacaoServiceTest {
 
 	@InjectMocks
@@ -132,12 +138,14 @@ public class LocacaoServiceTest {
 	}
 
 	@Test
-	public void deveDevolverFilmeNaSegundaAoLocarNoSabado() throws LocacaoException, FilmeSemEstoqueException {
-		assumeTrue(DataUtils.verificarDiaSemana(new Date(), Calendar.SATURDAY));
-
+	public void deveDevolverFilmeNaSegundaAoLocarNoSabado() throws Exception {
+//		assumeTrue(DataUtils.verificarDiaSemana(new Date(), Calendar.SATURDAY));
+		
 		// cenario
 		usuario = umUsuario().agora();
 		List<Filme> filmes = Arrays.asList(new Filme("Filme 1", 1, 4.0));
+
+		PowerMockito.whenNew(Date.class).withNoArguments().thenReturn(DataUtils.obterData(13, 06, 2021));
 
 		// acao
 		Locacao locacao = service.alugarFilme(usuario, filmes);
