@@ -18,6 +18,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -28,14 +29,13 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.Spy;
 import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.reflect.Whitebox;
 
 import br.ce.wcaquino.dao.LocacaoDAO;
 import br.ce.wcaquino.entidades.Filme;
@@ -45,12 +45,9 @@ import br.ce.wcaquino.exceptions.FilmeSemEstoqueException;
 import br.ce.wcaquino.exceptions.LocacaoException;
 import br.ce.wcaquino.utils.DataUtils;
 
-@PowerMockIgnore("jdk.internal.reflect.*")
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({LocacaoService.class, DataUtils.class})
 public class LocacaoServiceTest {
 
-	@InjectMocks
+	@InjectMocks @Spy
 	private LocacaoService service = new LocacaoService();
 
 	private Usuario usuario;
@@ -78,7 +75,7 @@ public class LocacaoServiceTest {
 	public void deveTestarLocacaoComSucesso() throws Exception {
 //		assumeFalse(DataUtils.verificarDiaSemana(new Date(), Calendar.SATURDAY));
 		
-		PowerMockito.whenNew(Date.class).withNoArguments().thenReturn(DataUtils.obterData(16, 06, 2021));
+		Mockito.doReturn(DataUtils.obterData(16, 06, 2021)).when(service).obterData();
 
 		// cenario
 		usuario = umUsuario().agora();
@@ -91,14 +88,14 @@ public class LocacaoServiceTest {
 
 		// verificacao
 		error.checkThat(locacao.getValor(), is(equalTo(11.0)));
-		error.checkThat(locacao.getDataLocacao(), ehHoje());
-		error.checkThat(locacao.getDataRetorno(), ehHojeComDiferencaDias(1));
-//		error.checkThat(DataUtils.isMesmaData(locacao.getDataLocacao(), DataUtils.obterData(16, 06, 2021)), is(true));
-//		error.checkThat(DataUtils.isMesmaData(locacao.getDataRetorno(), DataUtils.obterData(17, 06, 2021)), is(true));
+//		error.checkThat(locacao.getDataLocacao(), ehHoje());
+//		error.checkThat(locacao.getDataRetorno(), ehHojeComDiferencaDias(1));
+		error.checkThat(DataUtils.isMesmaData(locacao.getDataLocacao(), DataUtils.obterData(16, 06, 2021)), is(true));
+		error.checkThat(DataUtils.isMesmaData(locacao.getDataRetorno(), DataUtils.obterData(17, 06, 2021)), is(true));
 	}
 
 	/*
-	 * Forma Elegante de tratamento de exce��o
+	 * Forma Elegante de tratamento de excecao
 	 */
 	@Test(expected = FilmeSemEstoqueException.class)
 	public void deveTestarLocacaoDeFilmeSemEstoque() throws Exception {
@@ -149,14 +146,13 @@ public class LocacaoServiceTest {
 		usuario = umUsuario().agora();
 		List<Filme> filmes = Arrays.asList(new Filme("Filme 1", 1, 4.0));
 
-		PowerMockito.whenNew(Date.class).withNoArguments().thenReturn(DataUtils.obterData(13, 06, 2021));
+		Mockito.doReturn(DataUtils.obterData(12, 06, 2021)).when(service).obterData();
 		
 		// acao
 		Locacao locacao = service.alugarFilme(usuario, filmes);
 
 		// verificacao
 		assertThat(locacao.getDataRetorno(), caiEmUmaSegunda());
-		PowerMockito.verifyNew(Date.class, times(2)).withNoArguments();
 	}
 
 	@SuppressWarnings("deprecation")
@@ -233,5 +229,27 @@ public class LocacaoServiceTest {
 		error.checkThat(locacaoRetornada.getDataRetorno(), is(ehHojeComDiferencaDias(3)));
 		
 	}
-
+	
+	/**
+	 * Forma de invocar metodos privados sem uso do PowerMock
+	 * Essa forma é uma alternativa a ser usada em casos de metodos muito complexos de serem testados
+	 * Exemplo: Projetos/Sistemas Legados
+	 */
+	@Test
+	public void deveCalcularValorLocacao() throws Exception {
+		//cenario
+		filmes = Arrays.asList(umFilme().agora());
+		
+		//acao
+		Class<LocacaoService> clazz = LocacaoService.class;
+		Method metodo = clazz.getDeclaredMethod("calcularValorLocacao", List.class);
+		metodo.setAccessible(true);
+		Double valor = (Double) metodo.invoke(service, filmes);
+		
+		//verificacao
+		assertThat(valor, is(4.0));
+	}
+	
+	
+	
 }
